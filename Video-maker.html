@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VidCraft Pro - Professional Video Editor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --primary-dark: #5649c0;
+            --accent: #fd79a8;
+            --dark: #2d3436;
+            --light: #f5f6fa;
+            --gray: #dfe6e9;
+            --gray-dark: #b2bec3;
+            --radius: 12px;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Header */
+        header {
+            background: rgba(255, 255, 255, 0.97);
+            backdrop-filter: blur(8px);
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 0.8rem 0;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            text-decoration: none;
+            font-size: 1.3rem;
+        }
+
+        .logo-icon {
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+
+        .main-nav {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .main-nav a {
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .main-nav a:hover {
+            color: var(--primary);
+        }
+
+        .main-nav a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--primary);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.4rem;
+            color: var(--dark);
+            cursor: pointer;
+        }
+
+        /* Main Content */
+        main {
+            padding: 2rem 0;
+        }
+
+        .editor-wrapper {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 1200px) {
+            .editor-wrapper {
+                grid-template-columns: 1.5fr 2fr;
+            }
+        }
+
+        /* Video Preview Section */
+        .video-container {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            transition: var(--transition);
+            position: sticky;
+            top: 80px;
+            height: fit-content;
+        }
+
+        .video-preview {
+            width: 100%;
+            aspect-ratio: 9/16;
+            background: linear-gradient(135deg, #f0f1ff, #e0e3ff);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: var(--gray-dark);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .video-preview video {
+            max-width: 100%;
+            max-height: 100%;
+            display: none;
+        }
+
+        .upload-placeholder {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .upload-placeholder i {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .upload-placeholder p {
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .upload-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--primary);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: var(--radius);
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 6px rgba(108, 92, 231, 0.2);
+        }
+
+        .upload-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(108, 92, 231, 0.3);
+        }
+
+        .video-controls {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+            padding: 1rem;
+            background: white;
+            border-top: 1px solid var(--gray);
+        }
+
+        .control-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.8rem;
+            border-radius: var(--radius);
+            background: white;
+            border: 1px solid var(--gray);
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.85rem;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .control-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .control-btn.primary {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 4px 6px rgba(108, 92, 231, 0.2);
+        }
+
+        .control-btn.primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(108, 92, 231, 0.3);
+        }
+
+        /* Editor Tools Section */
+        .tools-container {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+        }
+
+        .tool-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--gray);
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .tool-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tool-tab {
+            padding: 1rem 1.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+        }
+
+        .tool-tab.active {
+            border-bottom-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+            padding: 1.5rem;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .tool-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .tool-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .tool-title i {
+            color: var(--primary);
+        }
+
+        /* Trim Tools */
+        .trim-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .time-input {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .time-input input {
+            width: 100%;
+            padding: 0.6rem;
+            border-radius: var(--radius);
+            border: 1px solid var(--gray);
+            font-size: 0.9rem;
+        }
+
+        /* Audio Tools */
+        .audio-waveform {
+            height: 80px;
+            background: var(--light);
+            border-radius: var(--radius);
+            margin-bottom: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .waveform-placeholder {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--gray-dark);
+            font-size: 0.9rem;
+        }
+
+        /* Text Tools */
+        .text-presets {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .text-preset {
+            padding: 0.5rem;
+            border: 1px solid var(--gray);
+            border-radius: var(--radius);
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .text-preset:hover {
+            border-color: var(--primary);
+        }
+
+        /* Effects Tools */
+        .effect-thumbnails {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .effect-thumbnail {
+            aspect-ratio: 1/1;
+            background: var(--light);
+            border-radius: var(--radius);
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .effect-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .effect-label {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 0.3rem;
+            font-size: 0.7rem;
+            text-align: center;
+        }
+
+        /* Common Form Elements */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            -webkit-appearance: none;
+            background: var(--gray);
+            border-radius: 3px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: var(--primary);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        select, input[type="text"], input[type="number"], textarea {
+            width: 100%;
+            padding: 0.7rem;
+            border-radius: var(--radius);
+            border: 1px solid var(--gray);
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        select:focus, input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.5rem;
+            border-radius: var(--radius);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 6px rgba(108, 92, 231, 0.2);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(108, 92, 231, 0.3);
+        }
+
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+
+        /* Timeline Editor */
+        .timeline-container {
+            margin-top: 2rem;
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-md);
+            padding: 1.5rem;
+        }
+
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .timeline-track {
+            height: 60px;
+            background: var(--light);
+            border-radius: var(--radius);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .video-container {
+                position: static;
+            }
+            
+            .video-controls {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-nav {
+                display: none;
+                position: fixed;
+                top: 0;
+                right: 0;
+                width: 70%;
+                height: 100vh;
+                background: white;
+                flex-direction: column;
+                padding: 5rem 2rem;
+                box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+            }
+
+            .main-nav.active {
+                display: flex;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .trim-controls {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="#" class="logo">
+                    <i class="fas fa-play-circle logo-icon"></i>
+                    VidCraft Pro
+                </a>
+                <nav class="main-nav" id="mainNav">
+                    <a href="#" class="active">Editor</a>
+                    <a href="#">Templates</a>
+                    <a href="#">Assets</a>
+                    <a href="#">Export</a>
+                </nav>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="editor-wrapper">
+            <!-- Video Preview Section -->
+            <div class="video-container">
+                <div class="video-preview" id="videoPreview">
+                    <div class="upload-placeholder">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Upload your video to get started</p>
+                        <button class="upload-btn" id="uploadBtn">
+                            <i class="fas fa-upload"></i> Select Video
+                        </button>
+                    </div>
+                    <video id="videoElement" controls></video>
+                </div>
+                <div class="video-controls">
+                    <button class="control-btn">
+                        <i class="fas fa-undo"></i> Undo
+                    </button>
+                    <button class="control-btn">
+                        <i class="fas fa-redo"></i> Redo
+                    </button>
+                    <button class="control-btn primary" id="exportBtn">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                    <button class="control-btn">
+                        <i class="fas fa-music"></i> Audio
+                    </button>
+                    <button class="control-btn">
+                        <i class="fas fa-text-height"></i> Text
+                    </button>
+                    <button class="control-btn">
+                        <i class="fas fa-magic"></i> Effects
+                    </button>
+                </div>
+            </div>
+
+            <!-- Editor Tools Section -->
+            <div class="tools-container">
+                <div class="tool-tabs">
+                    <div class="tool-tab active" data-tab="trim">Trim</div>
+                    <div class="tool-tab" data-tab="audio">Audio</div>
+                    <div class="tool-tab" data-tab="text">Text</div>
+                    <div class="tool-tab" data-tab="effects">Effects</div>
+                    <div class="tool-tab" data-tab="filters">Filters</div>
+                    <div class="tool-tab" data-tab="speed">Speed</div>
+                    <div class="tool-tab" data-tab="transitions">Transitions</div>
+                </div>
+
+                <!-- Trim Tab -->
+                <div class="tab-content active" id="trim-tab">
+                    <div class="tool-group">
+                        <div class="tool-title">
+                            <i class="fas fa-cut"></i>
+                            Video Trimming
+                        </div>
+                        <div class="trim-controls">
+                            <div class="time-input">
+                                <label>Start:</label>
+                                <input type="text" value="00:00:00">
+                            </div>
+                            <div class="time-input">
+                                <label>End:</label>
+                                <input type="text" value="00:00:30">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input type="range" id="trim-range" min="0" max="100" value="0">
+                        </div>
+                        <button class="btn btn-primary btn-block">
+                            <i class="fas fa-check"></i> Apply Trim
+                        </button>
+                    </div>
+
+                    <div class="tool-group">
+                        <div class="tool-title">
+                            <i class="fas fa-crop"></i>
+                            Crop & Aspect Ratio
+                        </div>
+                        <div class="form-group">
+                            <select id="aspectRatio">
+                                <option value="9:16">9:16 Vertical (Reels/TikTok)</option>
+                                <option value="1:1">1:1 Square (Instagram)</option>
+                                <option value="16:9">16:9 Widescreen (YouTube)</option>
+                                <option value="4:5">4:5 Portrait (Facebook)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Zoom Level</label>
+                            <input type="range" min="100" max="200" value="100">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Audio Tab -->
+                <div class="tab-content" id="audio-tab">
+                    <div class="tool-group">
+                        <div class="tool-title">
+                            <i class="fas fa-music"></i>
+                            Audio Track
+                        </div>
+                        <div class="audio-waveform">
+                            <div class="waveform-placeholder">Audio waveform will appear here</div>
+                        </div>
+                        <div class="form-group">
+                            <label>Volume</label>
+                            <input type="range" min="0" max="200" value="100">
+                        </div>
+                        <div class="form-group">
+                            <label>Fade In/Out</label>
+                            <div class="trim-controls">
+                                <div class="time-input">
+                                    <label>Fade In:</label>
+                                    <input type="text" value="00:00:00">
+                                </div>
+                                <div class="time-input">
+                                    <label>Fade Out:</label>
+                                    <input type="text" value="00:00:00">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tool-group">
+                        <div class="tool-title">
+                            <i class="fas fa-headphones"></i>
+                            Background Music
+                        </div>
+                        <div class="form-group">
+                            <select>
+                                <option value="">Select music track</option>
+                                <option value="happy">Happy Vibes</option>
+                                <option value="epic">Epic Cinematic</option>
+                                <option value="chill">Chill Lo-fi</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Music Volume</label>
+                            <input type="range" min="0" max="100" value="50">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Text Tab -->
+                <div class="tab-content" id="text-tab">
+                    <div class="tool-group">
+                        <div class="tool-title">
+                            <i class="fas fa-text-height"></i>
+                            Add Text
+                        </div>
+                        <div class="form-group">
+                            <textarea placeholder="Enter your text here..." rows="3"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Text Style Presets</label>
+                            <div class="text-presets">
+                                <div class="text-preset">Basic</div>
+                                <div class="text-preset">Modern</div>
+                                <div class="text-preset">Bold</div>
+                                <div class="text-preset">Elegant</div>
+                                <div class="text-preset">Fun</div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Text Color</label>
+                            <input type="color" value="#ffffff">
+                        </div>
+                        <div class="form-group">
+                            <label>Background Color</label>
+                            <input type="color" value="#6c5ce7">
+                        </div>
+                        <div class="form-group">
+                            <label>Duration</label>
+                            <input type="text" value="00:00:05">
+                        </div>
+                        <button class="btn btn-primary btn-block">
+                            <i class="fas fa-plus"></i> Add Text Layer
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Effects Tab -->
+                <div class="tab-content" id="effects-tab">
+                    <div class="tool-group">
+                        <div class="tool-title">
+                            <i class="fas fa-magic"></i>
+                            Visual Effects
+                        </div>
+                        <div class="effect-thumbnails">
+                            <div class="effect-thumbnail">
+                                <div class="effect-label">Glitch</div>
+                            </div>
+                            <div class="effect-thumbnail">
+                                <div class="effect-label">VHS</div>
+                            </div>
+                            <div class="effect-thumbnail">
+                                <div class="effect-label">Pixelate</div>
+                            </div>
+                            <div class="effect-thumbnail">
+                                <div class="effect-label">Blur</div>
+                            </div>
+                            <div class="effect-thumbnail">
+                                <div class="effect-label">Zoom</div>
+                            </div>
+                            <div class="effect-thumbnail">
+                                <div class="effect-label">Vignette</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tool-group">
+                        <div class="tool-title">
+                            <i class="fas fa-sliders-h"></i>
+                            Effect Settings
+                        </div>
+                        <div class="form-group">
+                            <label>Intensity</label>
+                            <input type="range" min="0" max="100" value="50">
+                        </div>
+                        <div class="form-group">
+                            <label>Duration</label>
+                            <input type="text" value="00:00:02">
+                        </div>
+                        <button class="btn btn-primary btn-block">
+                            <i class="fas fa-check"></i> Apply Effect
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filters Tab -->
+                <div class="tab-content" id="filters-tab">
+                    <div class="tool-group">
+                        <div class="tool-title">
+                            <i class="fas fa-filter"></i>
+                            Color Filters
+                        </div>
+                        <div class="effect-thumbnails">
+                            <div class="effect-thumbnail">
+                                <div class="effect-label">Vibrant</div>
+                            </div>
+                            <div class="effect-thumbnail">
+                                <div class="effect-label">Moody</div>
+                            </div>
+                            <div class="effect-thumbnail">
+                                <div class="effect-label">B&W</div>
+                            </div>
+                            <div class="effect-thumbnail">
+                                <div class="effect-label">Warm</div>
+                            </div>
+                            <div class="effect-thumbnail">
+                                <div class="effect-label">Cool</div>
+                            </div>
+                            <div class="effect-thumbnail">
+                                <div class="effect-label">Vintage</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tool-group">
+                        <div class="tool-title">
+                            <i class="fas fa-adjust"></i>
+                            Color Correction
+                        </div>
+                        <div class="form-group">
+                            <label>Brightness</label>
+                            <input type="range" min="0" max="200" value="100">
+                        </div>
+                        <div class="form-group">
+                            <label>Contrast</label>
+                            <input type="range" min="0" max="200" value="100">
+                        </div>
+                        <div class="form-group">
+                            <label>Saturation</label>
+                            <input type="range" min="0" max="200" value="100">
+                        </div>
+                        <button class="btn btn-primary btn-block">
+                            <i class="fas fa-check"></i> Apply Adjustments
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Speed Tab -->
+                <div class="tab-content" id="speed-tab">
+                    <div class="tool-group">
+                        <div class="tool-title">
+                            <i class="fas fa-tachometer-alt"></i>
+                            Speed Control
+                        </div>
+                        <div class="form-group">
+                            <label>Speed Percentage</label>
+                            <input type="range" min="25" max="400" value="100">
+                        </div>
+                        <div class="form-group">
+                            <label>Time Remapping</label>
+                            <select>
+                                <option value="none">None</option>
+                                <option value="slowmo">Slow Motion</option>
+                                <option value="fast">Fast Motion</option>
+                                <option value="reverse">Reverse</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary btn-block">
+                            <i class="fas fa-check"></i> Apply Speed
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Transitions Tab -->
+                <div class="tab-content" id="transitions-tab">
+                    <div class="tool-group">
+                        <div class="tool-title">
+                            <i class="fas fa-exchange-alt"></i>
+                            Transitions
+                        </div>
+                        <div class="effect-thumbnails">
+                            <div class="effect-thumbnail">
+                                <div class="effect-label">Fade</div>
+                            </div>
+                            <div class="effect-thumbnail">
+                                <div class="effect-label">Slide</div>
+                            </div>
+                            <div class="effect-thumbnail">
+                                <div class="effect-label">Zoom</div>
+                            </div>
+                            <div class="effect-thumbnail">
+                                <div class="effect-label">Blur</div>
+                            </div>
+                            <div class="effect-thumbnail">
+                                <div class="effect-label">Wipe</div>
+                            </div>
+                            <div class="effect-thumbnail">
+                                <div class="effect-label">Spin</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tool-group">
+                        <div class="tool-title">
+                            <i class="fas fa-cog"></i>
+                            Transition Settings
+                        </div>
+                        <div class="form-group">
+                            <label>Duration</label>
+                            <input type="text" value="00:00:01">
+                        </div>
+                        <div class="form-group">
+                            <label>Easing</label>
+                            <select>
+                                <option value="linear">Linear</option>
+                                <option value="ease">Ease</option>
+                                <option value="ease-in">Ease In</option>
+                                <option value="ease-out">Ease Out</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary btn-block">
+                            <i class="fas fa-plus"></i> Add Transition
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Timeline Editor -->
+        <div class="timeline-container">
+            <div class="timeline-header">
+                <div class="tool-title">
+                    <i class="fas fa-layer-group"></i>
+                    Timeline
+                </div>
+                <button class="btn">
+                    <i class="fas fa-expand"></i> Expand
+                </button>
+            </div>
+            <div class="timeline-track">
+                <!-- Timeline tracks would be rendered here -->
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mainNav = document.getElementById('mainNav');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mainNav.classList.toggle('active');
+            mobileMenuBtn.innerHTML = mainNav.classList.contains('active') 
+                ? '<i class="fas fa-times"></i>' 
+                : '<i class="fas fa-bars"></i>';
+        });
+
+        // Tab switching
+        const tabs = document.querySelectorAll('.tool-tab');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs and content
+                document.querySelectorAll('.tool-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked tab and corresponding content
+                tab.classList.add('active');
+                const tabId = tab.getAttribute('data-tab');
+                document.getElementById(`${tabId}-tab`).classList.add('active');
+            });
+        });
+
+        // Video upload functionality
+        const videoInput = document.createElement('input');
+        videoInput.type = 'file';
+        videoInput.accept = 'video/*';
+        document.body.appendChild(videoInput);
+        
+        const uploadBtn = document.getElementById('uploadBtn');
+        const videoPreview = document.getElementById('videoPreview');
+        const videoElement = document.getElementById('videoElement');
+        const uploadPlaceholder = document.querySelector('.upload-placeholder');
+        
+        uploadBtn.addEventListener('click', () => videoInput.click());
+        
+        videoInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const videoURL = URL.createObjectURL(file);
+                videoElement.src = videoURL;
+                videoElement.style.display = 'block';
+                uploadPlaceholder.style.display = 'none';
+            }
+        });
+
+        // Export button
+        document.getElementById('exportBtn').addEventListener('click', () => {
+            if (!videoInput.files[0]) {
+                alert('Please upload a video first');
+                return;
+            }
+            
+            const btn = document.getElementById('exportBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Exporting...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                alert('Your video has been exported successfully!');
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
